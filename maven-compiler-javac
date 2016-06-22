@@ -1,0 +1,40 @@
+#!/bin/bash
+
+for last; do
+  :
+done
+
+function unquote() {
+  line="$1"
+  if [ ${line:0:1} == '"' -o ${line:0:1} == "'" ]; then
+    length=${#line}
+    length=$((length - 2))
+    echo ${line:1:$length}
+  else
+    echo $line
+  fi
+}
+
+classpath=""
+if [ ${last:0:1} == "@" ]; then
+  file=${last:1}
+  if [ -f "$file" ]; then
+    while read line; do
+      line=`unquote "$line"`
+      if [ -n "$line" ]; then
+        if [[ $last =~ ^-classpath* ]]; then
+          classpath="$line"
+        elif [[ $last =~ ^-cp* ]]; then
+          classpath="$line"
+        fi
+        last="$line"
+      fi
+    done < "$file"
+  fi
+fi
+
+if [ ${last:0:8} == "-AJAVAC=" ]; then
+  exec java -Xbootclasspath/a:"$classpath" ${last:8} $@
+else
+  exec javac $@
+fi

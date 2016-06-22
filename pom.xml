@@ -172,7 +172,7 @@
                                 <phase>test-compile</phase>
                                 <configuration>
                                     <fork>true</fork>
-                                    <executable>maven-compiler-javac</executable>
+                                    <executable>${basedir}/maven-compiler-javac</executable>
                                     <compilerArgument>-AJAVAC=-javaagent:${org.projectlombok:lombok:jar}=ECJ -jar ${org.eclipse.jdt.core.compiler:ecj:jar}</compilerArgument>
                                 </configuration>
                             </execution>
