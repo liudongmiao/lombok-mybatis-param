@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.8.8</version>
+            <version>6.9.10</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -166,7 +166,10 @@
                         <configuration>
                             <fork>true</fork>
                             <executable>${basedir}/maven-compiler-javac</executable>
-                            <compilerArgument>-AJAVAC=-javaagent:${org.projectlombok:lombok:jar}=ECJ -jar ${org.eclipse.jdt.core.compiler:ecj:jar}</compilerArgument>
+                            <compilerArgs>
+                                <arg>-AJAR=${org.eclipse.jdt.core.compiler:ecj:jar}</arg>
+                                <arg>-AJAVAAGENT=${org.projectlombok:lombok:jar}=ECJ</arg>
+                            </compilerArgs>
                         </configuration>
                     </plugin>
                 </plugins>
