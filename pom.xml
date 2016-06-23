@@ -36,9 +36,9 @@
             <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jdt.core.compiler</groupId>
-            <artifactId>ecj</artifactId>
-            <version>4.5.1</version>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.core</artifactId>
+            <version>3.10.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -167,7 +167,7 @@
                             <fork>true</fork>
                             <executable>${basedir}/maven-compiler-javac</executable>
                             <compilerArgs>
-                                <arg>-AJAR=${org.eclipse.jdt.core.compiler:ecj:jar}</arg>
+                                <arg>-AJAR=${org.eclipse.jdt:org.eclipse.jdt.core:jar}</arg>
                                 <arg>-AJAVAAGENT=${org.projectlombok:lombok:jar}=ECJ</arg>
                             </compilerArgs>
                         </configuration>
