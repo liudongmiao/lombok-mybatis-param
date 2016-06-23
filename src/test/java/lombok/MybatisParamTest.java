@@ -1,7 +1,7 @@
 package lombok;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 import org.apache.ibatis.annotations.Param;
 import org.testng.Assert;
@@ -25,12 +25,20 @@ public class MybatisParamTest {
 
     private void check(String methodName, int index, String paramValue, Class<?>... parameterTypes) throws NoSuchMethodException {
         Method method = Mapper.class.getMethod(methodName, parameterTypes);
-        Assert.assertEquals(method.getParameterCount(), parameterTypes.length);
-        Parameter parameter = method.getParameters()[index];
-        Assert.assertNotNull(parameter);
-        Param param = parameter.getAnnotation(Param.class);
+        Assert.assertEquals(method.getParameterTypes().length, parameterTypes.length);
+        Annotation[] annotations = method.getParameterAnnotations()[index];
+        Param param = getAnnotation(annotations, Param.class);
         Assert.assertNotNull(param);
         Assert.assertEquals(param.value(), paramValue);
+    }
+
+    private <T extends Annotation> T getAnnotation(Annotation[] annotations, Class<T> annotationClass) {
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType().equals(annotationClass)) {
+                return annotationClass.cast(annotation);
+            }
+        }
+        return null;
     }
 
     @MybatisParam
