@@ -28,7 +28,7 @@ public interface Mapper {
 }
 ```
 
-Use it in `maven`:
+Use it in `maven`: (you need to specify mybatis dependency)
 
 ```xml
 <dependency>
@@ -36,11 +36,13 @@ Use it in `maven`:
         <artifactId>lombok</artifactId>
         <!-- lombok 1.16.X use shadow class loader, which prevents load lombok extension -->
         <version>1.14.8</version>
+        <scope>provided</scope>
 </dependency>
 <dependency>
         <groupId>me.piebridge</groupId>
         <artifactId>lombok-mybatis-param</artifactId>
         <version>0.1</version>
+        <scope>provided</scope>
 </dependency>
 ```
 
