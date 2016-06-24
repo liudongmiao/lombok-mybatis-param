@@ -13,6 +13,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <lombok.version>1.16.8</lombok.version>
+        <!-- i didn't find a good way -->
+        <lombok.classpath>${project.build.outputDirectory}</lombok.classpath>
     </properties>
 
     <dependencies>
@@ -157,6 +160,45 @@
                                     <goal>properties</goal>
                                 </goals>
                             </execution>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.projectlombok</groupId>
+                                            <artifactId>lombok</artifactId>
+                                            <version>${lombok.version}</version>
+                                            <outputDirectory>${lombok.classpath}</outputDirectory>
+                                            <includes>**/*.SCL.lombok,META-INF/MANIFEST.MF</includes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <phase>process-resources</phase>
+                                <configuration>
+                                    <target>
+                                        <move todir="${lombok.classpath}" overwrite="true">
+                                            <fileset dir="${lombok.classpath}" />
+                                            <mapper type="glob" from="*.SCL.lombok" to="*.class" />
+                                        </move>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -172,8 +214,71 @@
                             </compilerArgs>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <configuration>
+                            <archive>
+                                <manifestFile>${lombok.classpath}/META-INF/MANIFEST.MF</manifestFile>
+                                <addMavenDescriptor>false</addMavenDescriptor>
+                            </archive>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>2.2</version>
+                        <executions>
+                            <execution>
+                                <id>shade-${project.artifactId}</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <finalName>lombok-${lombok.version}-eclipse</finalName>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                                            <resources>
+                                                <resource>META-INF/ShadowClassLoader</resource>
+                                            </resources>
+                                        </transformer>
+                                    </transformers>
+                                    <filters>
+                                        <filter>
+                                            <artifact>org.projectlombok:lombok</artifact>
+                                            <excludes>
+                                                <!-- we have added it -->
+                                                <exclude>**/*.SCL.lombok</exclude>
+                                            </excludes>
+                                        </filter>
+                                        <filter>
+                                            <artifact>org.mybatis:mybatis</artifact>
+                                            <includes>
+                                                <include>org/apache/ibatis/annotations/Param.class</include>
+                                            </includes>
+                                        </filter>
+                                    </filters>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
+            <dependencies>
+                <dependency>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                    <version>${lombok.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis</artifactId>
+                    <version>3.4.0</version>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 
