@@ -23,7 +23,7 @@ With `lombok.MybatisParam`, it can be simple:
 @lombok.MybatisParam
 public interface Mapper {
 
-    int count(int x, int y);
+    int select(int x, int y);
 
 }
 ```
