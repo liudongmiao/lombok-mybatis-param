@@ -46,9 +46,13 @@ public class HandleMybatisParam extends EclipseAnnotationHandler<MybatisParam> {
     }
 
     private static void handleMethod(EclipseNode method) {
+        Argument[] arguments = ((AbstractMethodDeclaration) method.get()).arguments;
+        if (arguments.length <= 1) {
+            return;
+        }
         char[][] name = Eclipse.fromQualifiedName(PARAM);
         TypeReference type = new QualifiedTypeReference(name, new long[name.length]);
-        for (Argument argument : ((AbstractMethodDeclaration) method.get()).arguments) {
+        for (Argument argument : arguments) {
             if (!hasParam(method, argument.annotations)) {
                 SingleMemberAnnotation annotation = new SingleMemberAnnotation(type, 0);
                 annotation.memberValue = new StringLiteral(argument.name, 0, 0, 0);

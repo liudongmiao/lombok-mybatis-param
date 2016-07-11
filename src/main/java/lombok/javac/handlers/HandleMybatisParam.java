@@ -42,9 +42,13 @@ public class HandleMybatisParam extends JavacAnnotationHandler<MybatisParam> {
     }
 
     private static void handleMethod(JavacNode method) {
+        List<JCTree.JCVariableDecl> params = ((JCTree.JCMethodDecl) method.get()).params;
+        if (params.size() <= 1) {
+            return;
+        }
         JavacTreeMaker maker = method.getTreeMaker();
         JCTree.JCExpression type = JavacHandlerUtil.chainDotsString(method, PARAM);
-        for (JCTree.JCVariableDecl param : ((JCTree.JCMethodDecl) method.get()).params) {
+        for (JCTree.JCVariableDecl param : params) {
             if (!hasParam(method, param.mods.annotations)) {
                 List<JCTree.JCExpression> args = List.<JCTree.JCExpression>of(maker.Literal(param.name.toString()));
                 JCTree.JCAnnotation annotation = maker.Annotation(type, args);
